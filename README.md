@@ -1,6 +1,7 @@
 # algorithm
 https://www.runoob.com/data-structures/data-structures-tutorial.html  
 算法一般是对数据结构里的数据的  增  删 改  查  排序
+
 数据结构是上边这8个，，，里边是 实现 和 算法（crud order）
 
 
