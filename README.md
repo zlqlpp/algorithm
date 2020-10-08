@@ -9,9 +9,9 @@
 
   1. https://c.runoob.com/compile/11   在线编译
 
-  2. https://www.dotcpp.com/course/ds/ c语言网
+  2. https://www.dotcpp.com/course/ds/ c语言网 --  先学
 
-  3. http://data.biancheng.net/        C语言中文网
+  3. http://data.biancheng.net/        C语言中文网  -- 后学
 
   4. https://www.youtube.com/playlist?list=PLe68gYG2zUeVNPEr9XPqeejGHihtQD6tl    浙大视频
 
