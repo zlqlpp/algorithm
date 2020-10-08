@@ -21,105 +21,105 @@
 //排序：把节点按某种指定的顺序重新排列。例如递增或递减。
 
 
-#include <cstdlib>
 #include <stdio.h>
-#include <iostream>
-  
-using namespace std;
-  
-//树的结点
-typedef struct node{
-    int data;
-    struct node* left;
-    struct node* right;
+#include <stdlib.h>
+//栈的结点设计
+//单个结点设计，数据和下一个指针
+typedef struct node     
+{
+    int data; 
+    struct node *next;
 } Node;
-  
-//树根
-typedef struct {
-    Node* root;
-} Tree;
-  
-//创建树--插入数据
-void insert(Tree* tree, int value){
-    //创建一个节点，让左右指针全部指向空，数据为value
-    Node* node=(Node*)malloc(sizeof(Node));
-    node->data = value;
-    node->left = NULL;
-    node->right = NULL;
-  
-    //判断树是不是空树，如果是，直接让树根指向这一个结点即可
-    if (tree->root == NULL){
-        tree->root = node;
-    } else {//不是空树
-        Node* temp = tree->root;//从树根开始
-        while (temp != NULL){
-            if (value < temp->data){ //小于就进左儿子
-                if (temp->left == NULL){
-                    temp->left = node;
-                    return;
-                } else {//继续往下搜寻
-                    temp = temp->left;
-                }
-            } else { //否则进右儿子
-                if (temp->right == NULL){
-                    temp->right = node;
-                    return;
-                }
-                else {//继续往下搜寻
-                    temp = temp->right;
-                }
-            }
-        }
+//利用上面的结点创建栈，分为指向头结点的top指针和计数用的count
+typedef struct stack    
+{
+    Node *top;
+    int count;
+} Link_Stack;
+ 
+//创建栈
+Link_Stack *Creat_stack()
+{
+    Link_Stack *p;
+    //p = new Link_Stack;
+    p=(Link_Stack*)malloc(sizeof(Link_Stack));
+    if(p==NULL){
+        printf("创建失败，即将退出程序");
+        exit(0);
     }
-    return;
+    p->count = 0;
+    p->top = NULL;
+    return p;
 }
-  
-  
-  //树的先序遍历 Preorder traversal
-void preorder(Node* node){
-    if (node != NULL)
+ 
+//入栈 push
+Link_Stack *Push_stack(Link_Stack *p, int elem)
+{
+    if (p == NULL)
+        return NULL;
+    Node *temp;
+    temp=(Node*)malloc(sizeof(Node));
+    //temp = new Node;
+    temp->data = elem;
+    temp->next = p->top;
+    p->top = temp;
+    p->count++;
+    return p;
+}
+ 
+//出栈 pop
+Link_Stack *Pop_stack(Link_Stack *p)
+{
+    Node *temp;
+    temp = p->top;
+    if (p->top == NULL)
     {
-        printf("%d ",node->data);
-        inorder(node->left);
-        inorder(node->right);
+        printf("错误：栈为空");
+        return p;
     }
-}
-
-//树的中序遍历 In-order traversal
-void inorder(Node* node){
-    if (node != NULL)
+    else
     {
-        inorder(node->left);
-        printf("%d ",node->data);
-        inorder(node->right);
+        p->top = p->top->next;
+        free(temp);
+        //delete temp;
+        p->count--;
+        return p;
     }
 }
-
-//树的后序遍历 Post-order traversal
-void postorder(Node* node){
-    if (node != NULL)
+ 
+//遍历栈：输出栈中所有元素
+int show_stack(Link_Stack *p)
+{
+    Node *temp;
+    temp = p->top;
+    if (p->top == NULL)
     {
-        inorder(node->left);
-        inorder(node->right);
-        printf("%d ",node->data);
+        printf("");
+        printf("错误：栈为空");
+        return 0;
     }
+    while (temp != NULL)
+    {
+        printf("%d\t", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+    return 0;
 }
-
-
-int main(){
-    Tree tree;
-    tree.root = NULL;//创建一个空树
-    int n;
-    scanf("%d",&n);
-  
-    //输入n个数并创建这个树
-    for (int i = 0; i < n; i++){
-        int temp;
-        scanf("%d",&temp);
-        insert(&tree, temp);
+ 
+int main()
+{ //用主函数测试一下功能
+    Link_Stack *p;
+    p = Creat_stack();
+    int n = 5;
+    int input[6] = {10,20,30,40,50,60};
+    /////////////以依次入栈的方式创建整个栈//////////////
+    for(int i=0;i<n;i++){
+        Push_stack(p, input[i]);
     }
-  
-    inorder(tree.root);//中序遍历
-  
+    show_stack(p);
+    ////////////////////出栈///////////////////////
+    Pop_stack(p);
+    show_stack(p);
     return 0;
 }

@@ -21,105 +21,76 @@
 //排序：把节点按某种指定的顺序重新排列。例如递增或递减。
 
 
-#include <cstdlib>
-#include <stdio.h>
-#include <iostream>
-  
-using namespace std;
-  
-//树的结点
-typedef struct node{
-    int data;
-    struct node* left;
-    struct node* right;
-} Node;
-  
-//树根
-typedef struct {
-    Node* root;
-} Tree;
-  
-//创建树--插入数据
-void insert(Tree* tree, int value){
-    //创建一个节点，让左右指针全部指向空，数据为value
-    Node* node=(Node*)malloc(sizeof(Node));
-    node->data = value;
-    node->left = NULL;
-    node->right = NULL;
-  
-    //判断树是不是空树，如果是，直接让树根指向这一个结点即可
-    if (tree->root == NULL){
-        tree->root = node;
-    } else {//不是空树
-        Node* temp = tree->root;//从树根开始
-        while (temp != NULL){
-            if (value < temp->data){ //小于就进左儿子
-                if (temp->left == NULL){
-                    temp->left = node;
-                    return;
-                } else {//继续往下搜寻
-                    temp = temp->left;
-                }
-            } else { //否则进右儿子
-                if (temp->right == NULL){
-                    temp->right = node;
-                    return;
-                }
-                else {//继续往下搜寻
-                    temp = temp->right;
-                }
-            }
-        }
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<cstring>
+#define maxsize 10      //表示循环队列的最大容量
+ 
+//循环队列的结构设计
+typedef struct cir_queue{
+    int data[maxsize];
+    int rear;
+    int front;
+}cir_queue;
+ 
+//初始化
+cir_queue *init(){
+    cir_queue *q = (cir_queue*)malloc(sizeof(cir_queue));
+    if(q==NULL){
+        exit(0);    //申请内存失败，退出程序
     }
-    return;
+    memset(q->data,0,sizeof(q->data));
+    q->front=0;
+    q->rear=0;
+    return q;
 }
-  
-  
-  //树的先序遍历 Preorder traversal
-void preorder(Node* node){
-    if (node != NULL)
-    {
-        printf("%d ",node->data);
-        inorder(node->left);
-        inorder(node->right);
+ 
+//入队操作push
+void push(cir_queue *q,int data){
+    if((q->rear+1)%maxsize==q->front){
+        printf("溢出，无法入队\n");
+        return;
+    }else{
+        q->rear=(q->rear+1)%maxsize;
+        q->data[q->rear]=data;
     }
 }
-
-//树的中序遍历 In-order traversal
-void inorder(Node* node){
-    if (node != NULL)
-    {
-        inorder(node->left);
-        printf("%d ",node->data);
-        inorder(node->right);
+ 
+//出队操作pop
+void pop(cir_queue *q){
+    if(q->rear==q->front){
+        printf("队列为空，无法出队\n");
+        return;
+    }else{
+        q->data[q->front]=0;
+        q->front=(q->front+1)%maxsize;
     }
 }
-
-//树的后序遍历 Post-order traversal
-void postorder(Node* node){
-    if (node != NULL)
-    {
-        inorder(node->left);
-        inorder(node->right);
-        printf("%d ",node->data);
+ 
+//遍历队列
+void print(cir_queue *q){
+    int i=q->front;
+    while(i!=q->rear){
+        i=(i+1)%maxsize;
+        printf("%d\t",q->data[i]);   
     }
+    printf("\n");       //记得换行
 }
-
-
+ 
 int main(){
-    Tree tree;
-    tree.root = NULL;//创建一个空树
-    int n;
-    scanf("%d",&n);
-  
-    //输入n个数并创建这个树
-    for (int i = 0; i < n; i++){
-        int temp;
-        scanf("%d",&temp);
-        insert(&tree, temp);
+    cir_queue *q = init();
+    ////////////入队操作///////////////
+    printf("入队操作\n");
+    for(int i=1;i<=6;i++){
+        push(q,i);
     }
-  
-    inorder(tree.root);//中序遍历
-  
+    print(q);
+    ////////////出队操作///////////////
+    printf("出队操作\n");
+    for(int i=1;i<=3;i++){
+        pop(q);
+        print(q);
+    }
     return 0;
 }

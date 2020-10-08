@@ -21,105 +21,63 @@
 //排序：把节点按某种指定的顺序重新排列。例如递增或递减。
 
 
-#include <cstdlib>
-#include <stdio.h>
-#include <iostream>
-  
-using namespace std;
-  
-//树的结点
-typedef struct node{
-    int data;
-    struct node* left;
-    struct node* right;
-} Node;
-  
-//树根
-typedef struct {
-    Node* root;
-} Tree;
-  
-//创建树--插入数据
-void insert(Tree* tree, int value){
-    //创建一个节点，让左右指针全部指向空，数据为value
-    Node* node=(Node*)malloc(sizeof(Node));
-    node->data = value;
-    node->left = NULL;
-    node->right = NULL;
-  
-    //判断树是不是空树，如果是，直接让树根指向这一个结点即可
-    if (tree->root == NULL){
-        tree->root = node;
-    } else {//不是空树
-        Node* temp = tree->root;//从树根开始
-        while (temp != NULL){
-            if (value < temp->data){ //小于就进左儿子
-                if (temp->left == NULL){
-                    temp->left = node;
-                    return;
-                } else {//继续往下搜寻
-                    temp = temp->left;
-                }
-            } else { //否则进右儿子
-                if (temp->right == NULL){
-                    temp->right = node;
-                    return;
-                }
-                else {//继续往下搜寻
-                    temp = temp->right;
-                }
-            }
-        }
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#define maxn 10000
+ 
+//结点设计
+typedef struct stack{
+    int data[maxn];
+    int top;
+}stack;
+ 
+//创建
+stack *init(){
+    stack *s=(stack *)malloc(sizeof(stack));
+    if(s==NULL){
+        printf("分配内存空间失败");
+        exit(0);
     }
-    return;
+    memset(s->data,0,sizeof(s->data));
+    //memset操作来自于库文件string.h，其表示将整个空间进行初始化
+    //不理解可以查阅百度百科https://baike.baidu.com/item/memset/4747579?fr=aladdin
+    s->top=0;     //栈的top和bottom均为0（表示为空）
+    return s;
 }
-  
-  
-  //树的先序遍历 Preorder traversal
-void preorder(Node* node){
-    if (node != NULL)
-    {
-        printf("%d ",node->data);
-        inorder(node->left);
-        inorder(node->right);
+ 
+//入栈push
+void push(stack *s,int data){
+    s->data[s->top]=data;
+    s->top++;
+}
+ 
+//出栈pop
+void pop(stack *s){
+    if(s->top!=0){
+        s->data[s->top]=0;  //让其回归0模拟表示未初始化即可
+        s->top--;
     }
 }
-
-//树的中序遍历 In-order traversal
-void inorder(Node* node){
-    if (node != NULL)
-    {
-        inorder(node->left);
-        printf("%d ",node->data);
-        inorder(node->right);
+ 
+//模拟打印栈中元素
+void print_stack(stack *s){
+    for(int n=s->top-1;n>=0;n--){
+        printf("%d\t",s->data[n]);
     }
+    printf("\n");   //习惯性换行
 }
-
-//树的后序遍历 Post-order traversal
-void postorder(Node* node){
-    if (node != NULL)
-    {
-        inorder(node->left);
-        inorder(node->right);
-        printf("%d ",node->data);
-    }
-}
-
-
+ 
 int main(){
-    Tree tree;
-    tree.root = NULL;//创建一个空树
-    int n;
-    scanf("%d",&n);
-  
-    //输入n个数并创建这个树
-    for (int i = 0; i < n; i++){
-        int temp;
-        scanf("%d",&temp);
-        insert(&tree, temp);
+    stack *s=init();
+    int input[5]={11,22,33,44,55};  //模拟五个输入数据
+    for(int i=0;i<5;i++){
+        push(s,input[i]);
     }
-  
-    inorder(tree.root);//中序遍历
-  
+    print_stack(s);
+    /////////////
+    pop(s);
+    print_stack(s);
     return 0;
 }

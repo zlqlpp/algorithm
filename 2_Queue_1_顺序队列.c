@@ -21,105 +21,110 @@
 //排序：把节点按某种指定的顺序重新排列。例如递增或递减。
 
 
-#include <cstdlib>
-#include <stdio.h>
-#include <iostream>
-  
-using namespace std;
-  
-//树的结点
+
+#include<stdio.h>
+#include<stdlib.h>
+//结点定义
 typedef struct node{
     int data;
-    struct node* left;
-    struct node* right;
-} Node;
-  
-//树根
-typedef struct {
-    Node* root;
-} Tree;
-  
-//创建树--插入数据
-void insert(Tree* tree, int value){
-    //创建一个节点，让左右指针全部指向空，数据为value
-    Node* node=(Node*)malloc(sizeof(Node));
-    node->data = value;
-    node->left = NULL;
-    node->right = NULL;
-  
-    //判断树是不是空树，如果是，直接让树根指向这一个结点即可
-    if (tree->root == NULL){
-        tree->root = node;
-    } else {//不是空树
-        Node* temp = tree->root;//从树根开始
-        while (temp != NULL){
-            if (value < temp->data){ //小于就进左儿子
-                if (temp->left == NULL){
-                    temp->left = node;
-                    return;
-                } else {//继续往下搜寻
-                    temp = temp->left;
-                }
-            } else { //否则进右儿子
-                if (temp->right == NULL){
-                    temp->right = node;
-                    return;
-                }
-                else {//继续往下搜寻
-                    temp = temp->right;
-                }
-            }
-        }
+    struct node *next;
+}node;
+//队列定义，队首指针和队尾指针
+typedef struct queue{
+    node *front;
+    node *rear;
+}queue;
+ 
+//初始化结点
+node *init_node(){
+    node *n=(node*)malloc(sizeof(node));
+    if(n==NULL){    //建立失败，退出
+        exit(0);
     }
-    return;
+    return n;
 }
-  
-  
-  //树的先序遍历 Preorder traversal
-void preorder(Node* node){
-    if (node != NULL)
+ 
+//初始化队列
+queue *init_queue(){
+    queue *q=(queue*)malloc(sizeof(queue));
+    if(q==NULL){    //建立失败，退出
+        exit(0);
+    }
+    //头尾结点均赋值NULL
+    q->front=NULL;  
+    q->rear=NULL;
+    return q;
+}
+ 
+//队列判空
+int empty(queue *q){
+    if(q->front==NULL){
+        return 1;   //1--表示真，说明队列非空
+    }else{
+        return 0;   //0--表示假，说明队列为空
+    }
+}
+ 
+//入队操作
+void push(queue *q,int data){
+    node *n =init_node();
+    n->data=data;
+    n->next=NULL;   //采用尾插入法
+    //if(q->rear==NULL){  
+    if(empty(q)){
+        q->front=n;
+        q->rear=n;
+    }else{
+        q->rear->next=n;    //n成为当前尾结点的下一结点
+        q->rear=n;  //让尾指针指向n
+    }
+}
+ 
+//出队操作
+void pop(queue *q){
+    node *n=q->front;
+    if(empty(q)){
+        return ;    //此时队列为空，直接返回函数结束
+    }
+    if(q->front==q->rear){
+        q->front=NULL;  //只有一个元素时直接将两端指向制空即可
+        q->rear=NULL;
+        free(n);        //记得归还内存空间
+    }else{
+        q->front=q->front->next;
+        free(n);
+    }
+}
+ 
+//打印队列元素
+void print_queue(queue *q){
+    node *n = init_node();
+    n=q->front;
+    if(empty(q)){
+        return ;    //此时队列为空，直接返回函数结束
+    }
+    while (n!=NULL)
     {
-        printf("%d ",node->data);
-        inorder(node->left);
-        inorder(node->right);
+        printf("%d\t",n->data);
+        n=n->next;
     }
+    printf("\n");   //记得换行
 }
-
-//树的中序遍历 In-order traversal
-void inorder(Node* node){
-    if (node != NULL)
-    {
-        inorder(node->left);
-        printf("%d ",node->data);
-        inorder(node->right);
-    }
-}
-
-//树的后序遍历 Post-order traversal
-void postorder(Node* node){
-    if (node != NULL)
-    {
-        inorder(node->left);
-        inorder(node->right);
-        printf("%d ",node->data);
-    }
-}
-
-
+ 
+//主函数调用，这里只是简单介绍用法
 int main(){
-    Tree tree;
-    tree.root = NULL;//创建一个空树
-    int n;
-    scanf("%d",&n);
-  
-    //输入n个数并创建这个树
-    for (int i = 0; i < n; i++){
-        int temp;
-        scanf("%d",&temp);
-        insert(&tree, temp);
+    queue *q=init_queue();
+    ///////////////入队操作/////////////////
+    printf("入队\n");
+    for(int i=1;i<=5;i++){
+        push(q,i);
+        print_queue(q);
     }
-  
-    inorder(tree.root);//中序遍历
-  
+    ///////////////出队操作/////////////////
+    printf("出队\n");
+    for(int i=1;i<=5;i++){
+        pop(q);
+        print_queue(q);
+    }
     return 0;
 }
